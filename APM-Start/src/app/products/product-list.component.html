@@ -30,6 +30,7 @@
                         <th>Product</th>
                         <th>Code</th>
                         <th>Category</th>
+                        <th>Original Price</th>
                         <th>Price</th>
                         <th>In Stock</th>
                     </tr>
@@ -39,6 +40,7 @@
                         <td>{{ product.productName }}</td>
                         <td>{{ product.productCode }}</td>
                         <td>{{ product.categoryId }}</td>
+                        <td>{{ product.originalPrice | currency:"USD":"symbol":"1.2-2" }}</td>
                         <td>{{ product.price | currency:"USD":"symbol":"1.2-2" }}</td>
                         <td>{{ product.quantityInStock }}</td>
                     </tr>

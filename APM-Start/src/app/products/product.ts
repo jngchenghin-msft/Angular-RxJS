@@ -10,3 +10,7 @@ export interface Product {
   searchKey?: string[];
   supplierIds?: number[];
 }
+
+export interface ProductWithOriginal extends Product {
+  originalPrice?: number;
+}
