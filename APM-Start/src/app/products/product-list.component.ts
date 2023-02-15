@@ -1,42 +1,33 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ProductCategory } from '../product-categories/product-category';
 
 import { Product } from './product';
 import { ProductService } from './product.service';
 
 @Component({
-  templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css']
+    templateUrl: './product-list.component.html',
+    styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit, OnDestroy {
-  pageTitle = 'Product List';
-  errorMessage = '';
-  categories: ProductCategory[] = [];
+export class ProductListComponent implements OnInit {
+    pageTitle = 'Product List';
+    errorMessage = '';
+    categories: ProductCategory[] = [];
 
-  products: Product[] = [];
-  sub!: Subscription;
+    products$: Observable<Product[]> | undefined;
 
-  constructor(private productService: ProductService) { }
+    constructor(private productService: ProductService) { }
 
-  ngOnInit(): void {
-    this.sub = this.productService.getProducts()
-      .subscribe({
-        next: products => this.products = products,
-        error: err => this.errorMessage = err
-      });
-  }
+    ngOnInit(): void {
+        this.products$ = this.productService.getProducts();
+    }
 
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
-  }
+    onAdd(): void {
+        console.log('Not yet implemented');
+    }
 
-  onAdd(): void {
-    console.log('Not yet implemented');
-  }
-
-  onSelected(categoryId: string): void {
-    console.log('Not yet implemented');
-  }
+    onSelected(categoryId: string): void {
+        console.log('Not yet implemented');
+    }
 }
