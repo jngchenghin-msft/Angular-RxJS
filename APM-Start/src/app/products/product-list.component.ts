@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { BehaviorSubject, catchError, combineLatest, EMPTY, map } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, map, startWith, Subject } from 'rxjs';
 import { ProductCategoryService } from '../product-categories/product-category.service';
 
 import { ProductService } from './product.service';
@@ -14,8 +14,7 @@ export class ProductListComponent {
     pageTitle = 'Product List';
     errorMessage = '';
 
-    // using BehaviorSubject so that on page load all items are shown by default
-    private categorySelectedSubject = new BehaviorSubject<number>(0);
+    private categorySelectedSubject = new Subject<number>();
     categorySelectedAction$ = this.categorySelectedSubject.asObservable();
 
     products$ = this.productService.productsWithCategory$.pipe(
@@ -28,7 +27,7 @@ export class ProductListComponent {
 
     productsSimpleFilter$ = combineLatest([
         this.productService.productsWithCategory$,
-        this.categorySelectedAction$
+        this.categorySelectedAction$.pipe(startWith(0))
     ]).pipe(
         map(([products, categoryId]) => products.filter(product =>
             categoryId ? product.categoryId === categoryId : true
