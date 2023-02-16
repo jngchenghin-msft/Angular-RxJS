@@ -4,6 +4,7 @@
   "html.hover.references": false,
   "html.hover.documentation": false,
   "editor.glyphMargin": false,
+  "git.postCommitCommand": "push",
   // Use 3 when recording demos
   //"window.zoomLevel": 3,
 }
