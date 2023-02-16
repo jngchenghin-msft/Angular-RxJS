@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { catchError, EMPTY, filter, map } from 'rxjs';
-import { ProductCategory } from '../product-categories/product-category';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, map } from 'rxjs';
+import { ProductCategoryService } from '../product-categories/product-category.service';
 
 import { ProductService } from './product.service';
 
@@ -13,28 +13,37 @@ import { ProductService } from './product.service';
 export class ProductListComponent {
     pageTitle = 'Product List';
     errorMessage = '';
-    categories: ProductCategory[] = [];
-    selectedCategoryId = 1;
+
+    // using BehaviorSubject so that on page load all items are shown by default
+    private categorySelectedSubject = new BehaviorSubject<number>(0);
+    categorySelectedAction$ = this.categorySelectedSubject.asObservable();
 
     products$ = this.productService.productsWithCategory$.pipe(
         catchError(err => { this.errorMessage = err; return EMPTY; })
     );
 
-    productsSimpleFilter$ = this.productService.productsWithCategory$.pipe(
-        map(products => products.filter(product =>
-            this.selectedCategoryId ? product.categoryId === this.selectedCategoryId : true
+    categories$ = this.productCategoryService.categories$.pipe(
+        catchError(err => { this.errorMessage = err; return EMPTY; })
+    );
+
+    productsSimpleFilter$ = combineLatest([
+        this.productService.productsWithCategory$,
+        this.categorySelectedAction$
+    ]).pipe(
+        map(([products, categoryId]) => products.filter(product =>
+            categoryId ? product.categoryId === categoryId : true
         )),
         catchError(err => { this.errorMessage = err; return EMPTY; })
     );
 
 
-    constructor(private productService: ProductService) { }
+    constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) { }
 
     onAdd(): void {
         console.log('Not yet implemented');
     }
 
     onSelected(categoryId: string): void {
-        console.log('Not yet implemented');
+        this.categorySelectedSubject.next(+categoryId);
     }
 }
