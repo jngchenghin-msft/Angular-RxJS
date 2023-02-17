@@ -6,10 +6,20 @@
   <div class="card-body"
        *ngIf="products$ | async as products">
     <div class="list-group">
+        <!-- Highlighting the selected product solution 1 -->
+        <!-- <button type="button"
+              class="list-group-item"
+              *ngFor="let product of products"
+              [ngClass]="{ active: product.selected }"
+              (click)="onSelected(product.id)">
+        {{ product.productName }} ({{ product.category }})
+      </button> -->
+
+      <!-- Highlighting the selected product solution 2 -->
       <button type="button"
               class="list-group-item"
               *ngFor="let product of products"
-              [ngClass]="{ active: product?.id === selectedProductId }"
+              [ngClass]="{ active: product?.id === (selectedProduct$ | async)?.id }"
               (click)="onSelected(product.id)">
         {{ product.productName }} ({{ product.category }})
       </button>
