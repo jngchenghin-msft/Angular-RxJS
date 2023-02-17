@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { catchError, EMPTY } from 'rxjs';
+import { catchError, EMPTY, Subject } from 'rxjs';
 import { Supplier } from 'src/app/suppliers/supplier';
 
 import { ProductService } from '../product.service';
@@ -11,14 +11,15 @@ import { ProductService } from '../product.service';
 })
 export class ProductDetailComponent {
   pageTitle = 'Product Detail';
-  errorMessage = '';
+  private errorMessageSubject = new Subject<string>();
+  errorMessageSubject$ = this.errorMessageSubject.asObservable();
   productSuppliers: Supplier[] | null = null;
 
   constructor(private productService: ProductService) { }
 
   productDetail$ = this.productService.selectedProduct$.pipe(
     catchError(err => {
-      this.errorMessage = err;
+      this.errorMessageSubject.next(err);
       return EMPTY;
     }
   ));

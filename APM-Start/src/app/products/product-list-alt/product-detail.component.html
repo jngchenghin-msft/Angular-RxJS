@@ -59,6 +59,6 @@
 </div>
 
 <div class="alert alert-danger"
-     *ngIf="errorMessage">
+     *ngIf="(productDetail$ | async) && (errorMessageSubject$ | async) as errorMessage">
   {{ errorMessage }}
 </div>

@@ -12,7 +12,8 @@ import { ProductService } from './product.service';
 })
 export class ProductListComponent {
     pageTitle = 'Product List';
-    errorMessage = '';
+    private errorMessageSubject = new Subject<string>();
+    errorMessageSubject$ = this.errorMessageSubject.asObservable();
 
     private categorySelectedSubject = new Subject<number>();
     categorySelectedAction$ = this.categorySelectedSubject.asObservable();
@@ -24,15 +25,15 @@ export class ProductListComponent {
         map(([products, categoryId]) => products.filter(product =>
             categoryId ? product.categoryId === categoryId : true
         )),
-        catchError(err => { this.errorMessage = err; return EMPTY; })
+        catchError(err => { this.errorMessageSubject.next(err);; return EMPTY; })
     );
 
     categories$ = this.productCategoryService.categories$.pipe(
-        catchError(err => { this.errorMessage = err; return EMPTY; })
+        catchError(err => { this.errorMessageSubject.next(err);; return EMPTY; })
     );
 
 
-    constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) { }
+    constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) {}
 
     onAdd(): void {
         console.log('Not yet implemented');
