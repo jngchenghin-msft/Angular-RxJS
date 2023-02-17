@@ -52,13 +52,29 @@ export class ProductService {
     private addProductSubject = new Subject<Product>();
     addProductAction$ = this.addProductSubject.asObservable();
 
-    updatedProducts$ = merge(this.productsWithCategory$, this.addProductAction$).pipe(
-        scan((acc: Product[], value: Product | Product[]) => value instanceof Array ? [...value] : [...acc, value], [] as Product[])
-    );
-
     addNewProduct(newProduct?: Product): void {
         this.addProductSubject.next(newProduct || this.fakeProduct());
     }
+
+    private deleteProductSubject = new Subject<boolean>();
+    deleteProductAction$ = this.deleteProductSubject.asObservable();
+
+    // we'll just delete the first product every time
+    deleteProduct(): void {
+        this.deleteProductSubject.next(true);
+    }
+
+    updatedProducts$ = merge(this.productsWithCategory$, this.addProductAction$, this.deleteProductAction$).pipe(
+        scan((acc, value) => {
+            if (value instanceof Array) {
+               return [...value]
+            } else if (typeof value === 'boolean') {
+                return acc.slice(1);
+            } else {
+               return [...acc, value]
+            }
+        }, [] as Product[])
+    );
 
     constructor(private http: HttpClient, private productCategoryService: ProductCategoryService) {}
 
