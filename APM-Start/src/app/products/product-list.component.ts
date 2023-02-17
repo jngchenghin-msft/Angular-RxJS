@@ -19,24 +19,24 @@ export class ProductListComponent {
     categorySelectedAction$ = this.categorySelectedSubject.asObservable();
 
     products$ = combineLatest([
-        this.productService.productsWithCategory$,
+        this.productService.updatedProducts$,
         this.categorySelectedAction$.pipe(startWith(0))
     ]).pipe(
         map(([products, categoryId]) => products.filter(product =>
             categoryId ? product.categoryId === categoryId : true
         )),
-        catchError(err => { this.errorMessageSubject.next(err);; return EMPTY; })
+        catchError(err => { this.errorMessageSubject.next(err); return EMPTY; })
     );
 
     categories$ = this.productCategoryService.categories$.pipe(
-        catchError(err => { this.errorMessageSubject.next(err);; return EMPTY; })
+        catchError(err => { this.errorMessageSubject.next(err); return EMPTY; })
     );
 
 
     constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) {}
 
     onAdd(): void {
-        console.log('Not yet implemented');
+        this.productService.addNewProduct();
     }
 
     onSelected(categoryId: string): void {

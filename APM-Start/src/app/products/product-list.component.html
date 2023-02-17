@@ -14,7 +14,7 @@
                                 [value]="category.id">{{ category.name }}</option>
                     </select>
                 </div>
-                <div class="col-2">
+                <div class="col-2" *ngIf="products$ | async">
                     <button type="button"
                             class="btn btn-outline-secondary"
                             (click)="onAdd()">Add Product</button>
