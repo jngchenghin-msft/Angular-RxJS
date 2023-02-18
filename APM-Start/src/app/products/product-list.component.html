@@ -19,11 +19,6 @@
                             class="btn btn-outline-secondary"
                             (click)="onAdd()">Add Product</button>
                 </div>
-                <div class="col-3" *ngIf="products$ | async">
-                    <button type="button"
-                            class="btn btn-outline-secondary"
-                            (click)="onDelete()">Delete Product</button>
-                </div>
             </div>
         </div>
 
@@ -48,6 +43,9 @@
                         <td>{{ product.originalPrice | currency:"USD":"symbol":"1.2-2" }}</td>
                         <td>{{ product.price | currency:"USD":"symbol":"1.2-2" }}</td>
                         <td>{{ product.quantityInStock }}</td>
+                        <td><button type="button"
+                                    class="btn btn-outline-secondary"
+                                    (click)="onDelete(product.id)">Delete Product</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -58,5 +56,5 @@
 
 <div class="alert alert-danger"
      *ngIf="errorMessageSubject$ | async as errorMessage">
-  {{ errorMessage }}
+    {{ errorMessage }}
 </div>

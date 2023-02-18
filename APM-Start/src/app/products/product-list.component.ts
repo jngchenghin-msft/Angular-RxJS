@@ -39,8 +39,8 @@ export class ProductListComponent {
         this.productService.addNewProduct();
     }
 
-    onDelete(): void {
-        this.productService.deleteProduct();
+    onDelete(productToDelete: number): void {
+        this.productService.deleteProduct(productToDelete);
     }
 
     onSelected(categoryId: string): void {

@@ -56,20 +56,20 @@ export class ProductService {
         this.addProductSubject.next(newProduct || this.fakeProduct());
     }
 
-    private deleteProductSubject = new Subject<boolean>();
+    private deleteProductSubject = new Subject<number>();
     deleteProductAction$ = this.deleteProductSubject.asObservable();
 
     // we'll just delete the first product every time
-    deleteProduct(): void {
-        this.deleteProductSubject.next(true);
+    deleteProduct(productToDelete: number): void {
+        this.deleteProductSubject.next(productToDelete);
     }
 
     updatedProducts$ = merge(this.productsWithCategory$, this.addProductAction$, this.deleteProductAction$).pipe(
         scan((acc, value) => {
             if (value instanceof Array) {
                return [...value]
-            } else if (typeof value === 'boolean') {
-                return acc.slice(1);
+            } else if (typeof value === 'number') {
+                return acc.filter(product => product.id !== value);
             } else {
                return [...acc, value]
             }
