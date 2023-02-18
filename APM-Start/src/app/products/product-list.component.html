@@ -44,6 +44,9 @@
                         <td>{{ product.price | currency:"USD":"symbol":"1.2-2" }}</td>
                         <td>{{ product.quantityInStock }}</td>
                         <td><button type="button"
+                            class="btn btn-outline-secondary"
+                            (click)="onEdit(product.id)">Edit Product</button></td>
+                        <td><button type="button"
                                     class="btn btn-outline-secondary"
                                     (click)="onDelete(product.id)">Delete Product</button></td>
                     </tr>

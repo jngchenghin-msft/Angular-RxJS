@@ -59,19 +59,38 @@ export class ProductService {
     private deleteProductSubject = new Subject<number>();
     deleteProductAction$ = this.deleteProductSubject.asObservable();
 
-    // we'll just delete the first product every time
     deleteProduct(productToDelete: number): void {
         this.deleteProductSubject.next(productToDelete);
     }
 
-    updatedProducts$ = merge(this.productsWithCategory$, this.addProductAction$, this.deleteProductAction$).pipe(
+    private updateProductSubject = new Subject<Product>();
+    updateProductAction$ = this.updateProductSubject.asObservable();
+
+    editProduct(productToEdit: number): void {
+        const updatedProduct = {
+            ...this.fakeProduct(),
+            id: productToEdit,
+        } as Product;
+        this.updateProductSubject.next(updatedProduct);
+    }
+
+    updatedProducts$ = merge(this.productsWithCategory$, this.addProductAction$, this.deleteProductAction$, this.updateProductAction$).pipe(
         scan((acc, value) => {
             if (value instanceof Array) {
-               return [...value]
+               return [...acc, ...value]; // in case we need to combine arrays together
             } else if (typeof value === 'number') {
+                //delete
                 return acc.filter(product => product.id !== value);
             } else {
-               return [...acc, value]
+                // update
+                const productIndex = acc.findIndex(product => product.id === value.id);
+                if (productIndex > -1) {
+                    acc.splice(productIndex, 1, value);
+                    return acc;
+                } else {
+                    // add
+                    return [...acc, value]
+                }
             }
         }, [] as Product[])
     );
