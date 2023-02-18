@@ -36,6 +36,9 @@ export class ProductService {
 
     private selectedProductSubject = new BehaviorSubject<number>(0);
     selectedProductAction$ = this.selectedProductSubject.asObservable();
+    selectedProductChanged(selectedProductId: number): void {
+        this.selectedProductSubject.next(selectedProductId);
+    }
 
     selectedProduct$ = combineLatest([
         this.productsWithCategory$,
@@ -45,27 +48,20 @@ export class ProductService {
         tap(product => console.log('selectedProduct', product))
     );
 
-    selectedProductChanged(selectedProductId: number): void {
-        this.selectedProductSubject.next(selectedProductId);
-    }
-
     private addProductSubject = new Subject<Product>();
     addProductAction$ = this.addProductSubject.asObservable();
-
     addNewProduct(newProduct?: Product): void {
         this.addProductSubject.next(newProduct || this.fakeProduct());
     }
 
     private deleteProductSubject = new Subject<number>();
     deleteProductAction$ = this.deleteProductSubject.asObservable();
-
     deleteProduct(productToDelete: number): void {
         this.deleteProductSubject.next(productToDelete);
     }
 
     private updateProductSubject = new Subject<Product>();
     updateProductAction$ = this.updateProductSubject.asObservable();
-
     editProduct(productToEdit: number): void {
         const updatedProduct = {
             ...this.fakeProduct(),
