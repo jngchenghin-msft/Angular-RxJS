@@ -34,7 +34,7 @@ export class ProductService {
         )
     );
 
-    private selectedProductSubject = new BehaviorSubject<number>(0);
+    private selectedProductSubject = new BehaviorSubject<number>(1);
     selectedProductAction$ = this.selectedProductSubject.asObservable();
     selectedProductChanged(selectedProductId: number): void {
         this.selectedProductSubject.next(selectedProductId);
