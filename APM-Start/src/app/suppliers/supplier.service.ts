@@ -31,9 +31,6 @@ export class SupplierService {
   )
 
   constructor(private http: HttpClient) {
-    this.suppliersWithConcatMap$.subscribe(item => console.log('concatMap result', item));
-    this.suppliersWithMergeMap$.subscribe(item => console.log('mergeMap result', item));
-    this.suppliersWithSwitchMap$.subscribe(item => console.log('switchMap result', item));
   }
 
   private handleError(err: HttpErrorResponse): Observable<never> {
