@@ -4,7 +4,7 @@
   </div>
 
   <div class="card-body"
-       *ngIf="products$ | async as products">
+       *ngIf="products$ | async as products; else waiting">
     <div class="list-group">
         <!-- Highlighting the selected product solution 1 -->
         <!-- <button type="button"
@@ -31,3 +31,9 @@
      *ngIf="errorMessageSubject$ | async as errorMessage">
   {{ errorMessage }}
 </div>
+
+<ng-template #waiting>
+  <div class="alert alert-warning mt-2">
+    Loading...
+  </div>
+</ng-template>

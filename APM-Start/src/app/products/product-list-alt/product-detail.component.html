@@ -1,5 +1,5 @@
 <div class="card"
-     *ngIf="productDetail$ | async as product">
+     *ngIf="productDetail$ | async as product; else waiting">
   <div class="card-header">
     {{ pageTitle }}
   </div>
@@ -31,7 +31,7 @@
     </div>
 
     <div class="table-responsive"
-          *ngIf="productSuppliers">
+          *ngIf="productSuppliers$ | async as productSuppliers; else waiting">
       <table class="table mb-0"
              *ngIf="productSuppliers.length; else noSuppliers">
         <thead>
@@ -62,3 +62,9 @@
      *ngIf="(productDetail$ | async) && (errorMessageSubject$ | async) as errorMessage">
   {{ errorMessage }}
 </div>
+
+<ng-template #waiting>
+  <div class="alert alert-warning mt-2">
+    Loading...
+  </div>
+</ng-template>
