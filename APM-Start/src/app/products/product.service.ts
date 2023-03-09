@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { BehaviorSubject, catchError, combineLatest, map, merge, Observable, scan, shareReplay, Subject, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, merge, Observable, of, scan, shareReplay, Subject, switchMap, tap, throwError } from 'rxjs';
 
 import { Product } from './product';
 import { ProductCategoryService } from "../product-categories/product-category.service";
 import { SupplierService } from '../suppliers/supplier.service';
+import { Supplier } from '../suppliers/supplier';
 
 @Injectable({
     providedIn: 'root'
@@ -51,12 +52,26 @@ export class ProductService {
         shareReplay(1)
     );
 
-    selectedProductSuppliers$ = combineLatest([
-        this.selectedProduct$,
-        this.supplierService.suppliers$
-    ]).pipe(
-        map(([selectedProduct, suppliers]) => suppliers.filter(supplier => selectedProduct?.supplierIds?.includes(supplier.id)))
-    )
+    // selectedProductSuppliers$ = combineLatest([
+    //     this.selectedProduct$,
+    //     this.supplierService.suppliers$
+    // ]).pipe(
+    //     map(([selectedProduct, suppliers]) => suppliers.filter(supplier => selectedProduct?.supplierIds?.includes(supplier.id)))
+    // )
+
+    selectedProductSuppliers$ = this.selectedProduct$
+        .pipe(
+            filter(selectedProduct => Boolean(selectedProduct)),
+            switchMap(selectedProduct => {
+                if (selectedProduct?.supplierIds) {
+                    return forkJoin(selectedProduct.supplierIds.map(
+                        supplierId => this.http.get<Supplier>(`${this.suppliersUrl}/${supplierId}`)))
+                } else {
+                    return of([]);
+                }
+            }),
+            tap(suppliers => console.log('product suppliers', JSON.stringify(suppliers))),
+        )
 
     private addProductSubject = new Subject<Product>();
     addProductAction$ = this.addProductSubject.asObservable();
@@ -83,7 +98,7 @@ export class ProductService {
     updatedProducts$ = merge(this.productsWithCategory$, this.addProductAction$, this.deleteProductAction$, this.updateProductAction$).pipe(
         scan((acc, value) => {
             if (value instanceof Array) {
-               return [...acc, ...value]; // in case we need to combine arrays together
+                return [...acc, ...value]; // in case we need to combine arrays together
             } else if (typeof value === 'number') {
                 //delete
                 return acc.filter(product => product.id !== value);
