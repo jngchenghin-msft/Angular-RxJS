@@ -59,8 +59,11 @@ export class ProductService {
     //     map(([selectedProduct, suppliers]) => suppliers.filter(supplier => selectedProduct?.supplierIds?.includes(supplier.id)))
     // )
 
+    private suppliersLoadingSubject = new Subject<boolean>();
+    suppliersLoadingSubject$ = this.suppliersLoadingSubject.asObservable();
     selectedProductSuppliers$ = this.selectedProduct$
         .pipe(
+            tap(_ => this.suppliersLoadingSubject.next(true)),
             filter(selectedProduct => Boolean(selectedProduct)),
             switchMap(selectedProduct => {
                 if (selectedProduct?.supplierIds) {
@@ -70,7 +73,10 @@ export class ProductService {
                     return of([]);
                 }
             }),
-            tap(suppliers => console.log('product suppliers', JSON.stringify(suppliers))),
+            tap(suppliers => {
+                console.log('product suppliers', JSON.stringify(suppliers));
+                this.suppliersLoadingSubject.next(false);
+            }),
         )
 
     private addProductSubject = new Subject<Product>();
@@ -117,7 +123,7 @@ export class ProductService {
         shareReplay(1)
     );
 
-    constructor(private http: HttpClient, private productCategoryService: ProductCategoryService, private supplierService: SupplierService) {}
+    constructor(private http: HttpClient, private productCategoryService: ProductCategoryService, private supplierService: SupplierService) { }
 
     private fakeProduct(): Product {
         return {
